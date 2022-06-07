@@ -956,6 +956,15 @@ public class InCallController extends CallsManagerListenerBase implements
         }
     };
 
+    private final BroadcastReceiver mUserAddedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_USER_ADDED.equals(intent.getAction())) {
+                restrictPhoneCallOps();
+            }
+        }
+    };
+
     private final SystemStateListener mSystemStateListener = new SystemStateListener() {
         @Override
         public void onCarModeChanged(int priority, String packageName, boolean isCarMode) {
@@ -1067,6 +1076,7 @@ public class InCallController extends CallsManagerListenerBase implements
         mSystemStateHelper.addListener(mSystemStateListener);
         mClockProxy = clockProxy;
         restrictPhoneCallOps();
+        mContext.registerReceiver(mUserAddedReceiver, new IntentFilter(Intent.ACTION_USER_ADDED));
     }
 
     private void restrictPhoneCallOps() {
